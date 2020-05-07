@@ -180,7 +180,7 @@ class LTI_Message_Launch {
         $key_set_url = $this->registration->get_key_set_url();
 
         // Download key set
-        $public_key_set = json_decode(file_get_contents($key_set_urlfalse, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))), true);
+        $public_key_set = json_decode(file_get_contents($key_set_url,false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))), true);
 
         if (empty($public_key_set)) {
             // Failed to fetch public keyset from URL.
