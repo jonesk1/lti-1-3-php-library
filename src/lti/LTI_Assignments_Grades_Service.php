@@ -96,7 +96,7 @@ class LTI_Assignments_Grades_Service {
             return $scores['body'];
         }
         catch (exception $e) {
-            print_r($line_items);
+            print_r($line_item);
             throw $e;
         }
     }
