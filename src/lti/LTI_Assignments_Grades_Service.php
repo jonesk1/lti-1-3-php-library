@@ -53,39 +53,52 @@ class LTI_Assignments_Grades_Service {
             null,
             'application/vnd.ims.lis.v2.lineitemcontainer+json'
         );
-        foreach ($line_items['body'] as $line_item) {
-            if (empty($new_line_item->get_resource_id()) || $line_item['resourceId'] == $new_line_item->get_resource_id()) {
-                if (empty($new_line_item->get_tag()) || $line_item['tag'] == $new_line_item->get_tag()) {
-                    return new LTI_Lineitem($line_item);
+        try {
+            foreach ($line_items['body'] as $line_item) {
+                if (empty($new_line_item->get_resource_id()) || $line_item['resourceId'] == $new_line_item->get_resource_id()) {
+                    if (empty($new_line_item->get_tag()) || $line_item['tag'] == $new_line_item->get_tag()) {
+                        return new LTI_Lineitem($line_item);
+                    }
                 }
             }
+            $created_line_item = $this->service_connector->make_service_request(
+                $this->service_data['scope'],
+                'POST',
+                $this->service_data['lineitems'],
+                strval($new_line_item),
+                'application/vnd.ims.lis.v2.lineitem+json',
+                'application/vnd.ims.lis.v2.lineitem+json'
+            );
+            return new LTI_Lineitem($created_line_item['body']);
         }
-        $created_line_item = $this->service_connector->make_service_request(
-            $this->service_data['scope'],
-            'POST',
-            $this->service_data['lineitems'],
-            strval($new_line_item),
-            'application/vnd.ims.lis.v2.lineitem+json',
-            'application/vnd.ims.lis.v2.lineitem+json'
-        );
-        return new LTI_Lineitem($created_line_item['body']);
+        catch (exception $e) {
+            print_r($line_items);
+            throw $e;
+        }
+        
     }
 
     public function get_grades(LTI_Lineitem $lineitem) {
         $lineitem = $this->find_or_create_lineitem($lineitem);
         // Place '/results' before url params
-        $pos = strpos($lineitem->get_id(), '?');
-        $results_url = $pos === false ? $lineitem->get_id() . '/results' : substr_replace($lineitem->get_id(), '/results', $pos, 0);
-        $scores = $this->service_connector->make_service_request(
-            $this->service_data['scope'],
-            'GET',
-            $results_url,
-            null,
-            null,
-            'application/vnd.ims.lis.v2.resultcontainer+json'
-        );
+        try {
+            $pos = strpos($lineitem->get_id(), '?');
+            $results_url = $pos === false ? $lineitem->get_id() . '/results' : substr_replace($lineitem->get_id(), '/results', $pos, 0);
+            $scores = $this->service_connector->make_service_request(
+                $this->service_data['scope'],
+                'GET',
+                $results_url,
+                null,
+                null,
+                'application/vnd.ims.lis.v2.resultcontainer+json'
+            );
 
-        return $scores['body'];
+            return $scores['body'];
+        }
+        catch (exception $e) {
+            print_r($line_items);
+            throw $e;
+        }
     }
 }
 ?>
