@@ -14,28 +14,32 @@ class LTI_Names_Roles_Provisioning_Service {
     public function get_members() {
 
         $members = [];
+        try{
+            $next_page = $this->service_data['context_memberships_url'];
 
-        $next_page = $this->service_data['context_memberships_url'];
+            while ($next_page) {
+                $page = $this->service_connector->make_service_request(
+                    ['https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly'],
+                    'GET',
+                    $next_page,
+                    null,
+                    null,
+                    'application/vnd.ims.lti-nrps.v2.membershipcontainer+json'
+                );
 
-        while ($next_page) {
-            $page = $this->service_connector->make_service_request(
-                ['https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly'],
-                'GET',
-                $next_page,
-                null,
-                null,
-                'application/vnd.ims.lti-nrps.v2.membershipcontainer+json'
-            );
+                $members = array_merge($members, $page['body']['members']);
 
-            $members = array_merge($members, $page['body']['members']);
-
-            $next_page = false;
-            foreach($page['headers'] as $header) {
-                if (preg_match("/^Link:.*<([^>]*)>; ?rel=\"next\"/i", $header, $matches)) {
-                    $next_page = $matches[1];
-                    break;
+                $next_page = false;
+                foreach($page['headers'] as $header) {
+                    if (preg_match("/^Link:.*<([^>]*)>; ?rel=\"next\"/i", $header, $matches)) {
+                        $next_page = $matches[1];
+                        break;
+                    }
                 }
             }
+        }
+        catch(exception $e){
+            print_r($page['body']);
         }
         return $members;
 
