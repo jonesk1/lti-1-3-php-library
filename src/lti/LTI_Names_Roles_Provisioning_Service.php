@@ -26,7 +26,7 @@ class LTI_Names_Roles_Provisioning_Service {
                     null,
                     'application/vnd.ims.lti-nrps.v2.membershipcontainer+json'
                 );
-
+                print_r($page['body']);
                 $members = array_merge($members, $page['body']['members']);
 
                 $next_page = false;
