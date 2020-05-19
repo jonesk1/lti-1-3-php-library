@@ -53,7 +53,6 @@ class LTI_Assignments_Grades_Service {
             null,
             'application/vnd.ims.lis.v2.lineitemcontainer+json'
         );
-        print_r($line_items['body']);
         try {
             if (is_array($line_items['body']) || is_object($line_items['body'])){
                 foreach ($line_items['body'] as $line_item) {
