@@ -55,10 +55,12 @@ class LTI_Assignments_Grades_Service {
         );
         print_r($line_items['body']);
         try {
-            foreach ($line_items['body'] as $line_item) {
-                if (empty($new_line_item->get_resource_id()) || $line_item['resourceId'] == $new_line_item->get_resource_id()) {
-                    if (empty($new_line_item->get_tag()) || $line_item['tag'] == $new_line_item->get_tag()) {
-                        return new LTI_Lineitem($line_item);
+            if (is_array($line_items['body']) || is_object($line_items['body'])){
+                foreach ($line_items['body'] as $line_item) {
+                    if (empty($new_line_item->get_resource_id()) || $line_item['resourceId'] == $new_line_item->get_resource_id()) {
+                        if (empty($new_line_item->get_tag()) || $line_item['tag'] == $new_line_item->get_tag()) {
+                            return new LTI_Lineitem($line_item);
+                        }
                     }
                 }
             }
