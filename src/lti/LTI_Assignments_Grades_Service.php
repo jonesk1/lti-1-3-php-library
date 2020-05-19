@@ -73,7 +73,7 @@ class LTI_Assignments_Grades_Service {
         }
         catch (exception $e) {
             print_r($line_items);
-            throw $e;
+            exit;
         }
         
     }
