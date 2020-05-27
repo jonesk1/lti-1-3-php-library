@@ -199,7 +199,7 @@ class LTI_Message_Launch {
         }
 
         // Could not find public key with a matching kid and alg.
-        throw new LTI_Exception("Unable to find public key", 1);
+        throw new LTI_Exception("Unable to find public key " . $this->jwt['header']['kid'], 1);
     }
 
     private function cache_launch_data() {
