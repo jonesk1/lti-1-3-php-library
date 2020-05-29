@@ -7,6 +7,7 @@ class LTI_Deep_Link_Resource {
     private $title;
     private $url;
     private $lineitem;
+    private $html;
     private $custom_params = [];
     private $target = 'iframe';
 
@@ -20,6 +21,15 @@ class LTI_Deep_Link_Resource {
 
     public function set_type($value) {
         $this->type = $value;
+        return $this;
+    }
+    
+    public function get_html() {
+        return $this->html;
+    }
+
+    public function set_html($value) {
+        $this->html = $value;
         return $this;
     }
 
@@ -83,6 +93,9 @@ class LTI_Deep_Link_Resource {
                 "scoreMaximum" => $this->lineitem->get_score_maximum(),
                 "label" => $this->lineitem->get_label(),
             ];
+        }
+        if ($this->html !== null) {
+            $resource["html"] = $this->html;
         }
         return $resource;
     }
